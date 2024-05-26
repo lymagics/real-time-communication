@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+    <head>
+        <title>{{ object.home_team }} x {{ object.away_team }}</title>
+    </head>
+    <body>
+        <h1>Match information:</h1>
+        <h2>{{ object.home_team }} <span id="home_score">{{ object.home_score }}</span>:<span id="away_score">{{ object.away_score }}</span> {{ object.away_team }} </h2>
+    </body>
+    <script>
+        const awayScore = document.getElementById('away_score');
+        const homeScore = document.getElementById('home_score');
+        const matchId = `{{ object.id }}`;
+
+        const shortPolling = async () => {
+            let response = await fetch('/api/matches/' + matchId + '/');
+            
+            if (response.status === 200) {
+                let data = await response.json();
+
+                awayScore.innerHTML = data['away_score'];
+                homeScore.innerHTML = data['home_score'];
+            }
+        };
+
+        setInterval(shortPolling, timeout=3000);
+    </script>
+</html>

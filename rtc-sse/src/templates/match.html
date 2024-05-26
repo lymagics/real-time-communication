@@ -1,0 +1,26 @@
+{% load static %}
+<!doctype html>
+<html>
+    <head>
+        <title>{{ object.home_team }} x {{ object.away_team }}</title>
+    </head>
+    <body>
+        <h1>Match information:</h1>
+        <h2>{{ object.home_team }} <span id="home_score">{{ object.home_score }}</span>:<span id="away_score">{{ object.away_score }}</span> {{ object.away_team }} </h2>
+    </body>
+    <script src="{% static 'django_eventstream/eventsource.min.js' %}"></script>
+    <script src="{% static 'django_eventstream/reconnecting-eventsource.js' %}"></script>
+    <script>
+        const awayScore = document.getElementById('away_score');
+        const homeScore = document.getElementById('home_score');
+        const matchId = `{{ object.id }}`;
+        const es = new ReconnectingEventSource('/sse/matches/' + matchId + '/');
+
+        es.addEventListener('match_updated', function (event) {
+            let matchData = JSON.parse(event.data);
+            awayScore.innerHTML = matchData['away_score'];
+            homeScore.innerHTML = matchData['home_score'];
+        }, false);
+
+    </script>
+</html>
